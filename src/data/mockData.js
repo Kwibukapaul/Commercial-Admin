@@ -3,10 +3,10 @@ import { tokens } from "../theme";
 export const mockDataTeam = [
   {
     id: 1,
-    name: "Jon Snow",
-    email: "jonsnow@gmail.com",
-    age: 35,
-    phone: "(665)121-5454",
+    name: "UWIHANGANYE Obed",
+    email: "uwihanganyeobed@gmail.com",
+    age: 25,
+    phone: "(250)782426000",
     access: "admin",
   },
   {

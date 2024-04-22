@@ -1,22 +1,44 @@
-import { Box, Button, FormControl, FormLabel, Input, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
-import ImageIcon from '@mui/icons-material/Image';
 import { useState } from "react";
-import PermMediaIcon from '@mui/icons-material/PermMedia';
+import PermMediaIcon from "@mui/icons-material/PermMedia";
 
 const AddProduct = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-
-  const handleFormSubmit = (values) => {
+  const [image, setImage] = useState(false);
+  const [productDetails, setProductDetails] = useState({
+    prodName: "",
+    prodImage: "",
+    prodCategory: "women",
+    new_price: "",
+    old_price: "",
+  });
+  const handleFormSubmit = async (values) => {
     console.log(values);
   };
-  const [image, setImage]=useState(false);
-  const imageHandler=(e)=>{
+  const Add_Product = () => {
+    console.log(productDetails);
+  };
+  const changeHandler = (e) => {
+    setProductDetails({ ...productDetails, [e.target.name]: e.target.value });
+  };
+
+  const imageHandler = (e) => {
     setImage(e.target.files[0]);
-  }
+  };
   return (
     <Box m="20px">
       <Header title="Adding New Products" />
@@ -48,9 +70,9 @@ const AddProduct = () => {
                 type="text"
                 label="Product Title"
                 onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.productTitle}
-                name="productTitle"
+                onChange={changeHandler}
+                value={productDetails.prodName}
+                name="prodName"
                 error={!!touched.productTitle && !!errors.productTitle}
                 helperText={touched.productTitle && errors.productTitle}
                 sx={{ gridColumn: "span 4" }}
@@ -61,9 +83,9 @@ const AddProduct = () => {
                 type="text"
                 label="Price"
                 onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.price}
-                name="price"
+                onChange={changeHandler}
+                value={productDetails.old_price}
+                name="old_price"
                 error={!!touched.price && !!errors.price}
                 helperText={touched.price && errors.price}
                 sx={{ gridColumn: "span 4" }}
@@ -74,9 +96,9 @@ const AddProduct = () => {
                 type="text"
                 label="Offer Price"
                 onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.offerPrice}
-                name="offerPrice"
+                onChange={changeHandler}
+                value={productDetails.new_price}
+                name="new_price"
                 error={!!touched.offerPrice && !!errors.offerPrice}
                 helperText={touched.offerPrice && errors.offerPrice}
                 sx={{ gridColumn: "span 4" }}
@@ -84,30 +106,50 @@ const AddProduct = () => {
               <FormControl fullWidth sx={{ gridColumn: "span 4" }}>
                 <InputLabel>Product Category</InputLabel>
                 <Select
-                  value={values.productCategory}
-                  onChange={handleChange}
+                  value={productDetails.prodCategory}
+                  onChange={changeHandler}
                   onBlur={handleBlur}
-                  name="productCategory"
+                  name="prodCategory"
                   error={!!touched.productCategory && !!errors.productCategory}
                 >
-                  <MenuItem value="electronics"><ImageIcon /> Electronics</MenuItem>
-                  <MenuItem value="clothing"><ImageIcon /> Clothing</MenuItem>
-                  <MenuItem value="furniture"><ImageIcon /> Furniture</MenuItem>
+                  <MenuItem value="women">Electronics</MenuItem>
+                  <MenuItem value="men">Clothing</MenuItem>
+                  <MenuItem value="kids">Furniture</MenuItem>
                 </Select>
               </FormControl>
-              <Box sx={{ gridColumn: "span 4" }}>
-             <FormLabel htmlFor="file-input">
-              <img src={image ? URL.createObjectURL(image): PermMediaIcon} alt=""/>
-             </FormLabel>
-             <Input
-              onChange={imageHandler}
-              type="file"
-              name="image"
-              id="image" />
+              <Box
+                sx={{
+                  gridColumn: "span 1",
+                  height: 100,
+                  width: 100,
+                  borderRadius: 10,
+                  objectFit: "contain",
+                }}
+              >
+                <FormLabel htmlFor="file-input">
+                  <img
+                    src={image ? URL.createObjectURL(image) : PermMediaIcon}
+                    alt=""
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </FormLabel>
+                <Input
+                  onChange={imageHandler}
+                  type="file"
+                  name="image"
+                  id="image"
+                />
               </Box>
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
-              <Button type="submit" color="secondary" variant="contained">
+              <Button
+                type="submit"
+                color="secondary"
+                variant="contained"
+                onClick={() => {
+                  Add_Product();
+                }}
+              >
                 Submit
               </Button>
             </Box>
@@ -119,17 +161,17 @@ const AddProduct = () => {
 };
 
 const checkoutSchema = yup.object().shape({
-  productTitle: yup.string().required("Required"),
-  price: yup.number().required("Required"),
-  offerPrice: yup.number().required("Required"),
-  productCategory: yup.string().required("Required"),
+  prodName: yup.string().required("Required"),
+  old_price: yup.number().required("Required"),
+  new_price: yup.number().required("Required"),
+  prodCategory: yup.string().required("Required"),
 });
 
 const initialValues = {
-  productTitle: "",
-  price: "",
-  offerPrice: "",
-  productCategory: "",
+  prodName: "",
+  old_price: "",
+  new_price: "",
+  prodCategory: "",
 };
 
 export default AddProduct;

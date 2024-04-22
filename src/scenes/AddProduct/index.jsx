@@ -96,10 +96,6 @@ const AddProduct = () => {
                 </Select>
               </FormControl>
               <Box sx={{ gridColumn: "span 4" }}>
-             {/* <MuiFileInput
-             value={image ? URL.createObjectURL(image): PermMediaIcon}
-             onChange={imageHandler}
-             /> */}
              <FormLabel htmlFor="file-input">
               <img src={image ? URL.createObjectURL(image): PermMediaIcon} alt=""/>
              </FormLabel>

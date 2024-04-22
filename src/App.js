@@ -11,12 +11,14 @@ import Form from "./scenes/form";
 import Line from "./scenes/line";
 import Pie from "./scenes/pie";
 import FAQ from "./scenes/faq";
+import AddProduct from "./scenes/AddProduct";
+import ListProduct from "./scenes/ListProduct";
 import Geography from "./scenes/geography";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ColorModeContext, useMode } from "./theme";
 import Calendar from "./scenes/calendar/calendar";
-import AddProduct from "./components/AddProduct/AddProduct";
-import ListProduct from "./components/ListProduct/ListProduct";
+
+
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -40,8 +42,8 @@ function App() {
               <Route path="/pie" element={<Pie />} />
               <Route path="/line" element={<Line />} />
               <Route path="/faq" element={<FAQ />} />
-              <Route path="/addproduct" element={AddProduct} />
-              <Route path="/listproduct"element={ListProduct} />
+              <Route path="/addproduct" element={<AddProduct />} />
+              <Route path="/listproduct"element={<ListProduct />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/geography" element={<Geography />} />
             </Routes>

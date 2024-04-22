@@ -4,49 +4,72 @@ import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
 
 const ListProduct = () => {
   const [allProducts, setAllProducts] = useState([]);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
+  const fetchInfo = async () => {
+    await fetch("http://localhost:5000/allproducts")
+      .then((res) => res.json())
+      .then((data) => {
+        setAllProducts(data);
+      });
+  };
+
+  useEffect(() => {
+    fetchInfo();
+  }, []);
+
+  const remove_product = async (id) => {
+    await axios.post("http://localhost:5000/removeproduct", { id: id });
+    setAllProducts(prevProducts => prevProducts.filter((product) => product.prodId != id));
+  };
+
   const columns = [
+    { field: "id", headerName: "Id", flex: 1 },
     { field: "title", headerName: "Title", flex: 1 },
     { field: "oldPrice", headerName: "Old Price", flex: 1 },
     { field: "newPrice", headerName: "New Price", flex: 1 },
     { field: "category", headerName: "Category", flex: 1 },
     {
+      field: "image",
+      headerName: "Image",
+      flex: 1,
+      renderCell: (params) => (
+        <img
+          src={params.value}
+          alt={params.row.title}
+          style={{ height: "50px", width: "50px", objectFit: "cover" }}
+        />
+      ),
+    },
+    {
       field: "remove",
       headerName: "Remove",
       flex: 1,
-      renderCell: () => (
-        <IconButton aria-label="delete">
+      renderCell: (params) => (
+        <IconButton
+          aria-label="delete"
+          onClick={() => remove_product(params.row.id)}
+        >
           <DeleteIcon />
         </IconButton>
       ),
     },
   ];
 
-  useEffect(() => {
-    const fetchInfo = async () => {
-      await fetch("http://localhost:5000/allproducts")
-        .then((res) => res.json())
-        .then((data) => {
-          setAllProducts(data);
-        });
-    };
-
-    fetchInfo();
-  }, []);
-
-  const mockDataProducts = allProducts.map((product,index) => ({
-    id: product.prodId, // Ensure each row has a unique id
+  const mockDataProducts = allProducts.map((product, index) => ({
+    id: product.prodId || index,
     title: product.prodName,
     oldPrice: product.old_price,
     newPrice: product.new_price,
     category: product.prodCategory,
-}));
-console.log(mockDataProducts);
+    image: product.prodImage,
+  }));
+
   return (
     <Box m="20px">
       <Header title="All Products List" />
@@ -77,7 +100,12 @@ console.log(mockDataProducts);
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataProducts} columns={columns} />
+        <DataGrid
+          checkboxSelection
+          rows={mockDataProducts}
+          columns={columns}
+          getRowId={(row) => row.id}
+        />
       </Box>
     </Box>
   );

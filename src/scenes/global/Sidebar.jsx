@@ -139,14 +139,14 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Add Product"
-              to="/team"
+              to="/addproduct"
               icon={<AddShoppingCartIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Product List"
-              to="/contacts"
+              to="/listproduct"
               icon={<ListAltIcon />}
               selected={selected}
               setSelected={setSelected}

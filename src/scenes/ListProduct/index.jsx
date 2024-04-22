@@ -24,16 +24,13 @@ const ListProduct = () => {
   }, []);
 
   const remove_product = async (id) => {
-    await axios.post("http://localhost:5000/removeproduct", {prodId: id });
-    setAllProducts(prevProducts => prevProducts.filter((product) => product.prodId != id));
+    await axios.post("http://localhost:5000/removeproduct", {id: id });
+    setAllProducts(prevProducts => prevProducts.filter((product) => product.id != id));
   };
 
   const columns = [
+
     { field: "id", headerName: "Id", flex: 1 },
-    { field: "title", headerName: "Title", flex: 1 },
-    { field: "oldPrice", headerName: "Old Price", flex: 1 },
-    { field: "newPrice", headerName: "New Price", flex: 1 },
-    { field: "category", headerName: "Category", flex: 1 },
     {
       field: "image",
       headerName: "Image",
@@ -46,6 +43,10 @@ const ListProduct = () => {
         />
       ),
     },
+    { field: "title", headerName: "Title", flex: 1 },
+    { field: "oldPrice", headerName: "Old Price", flex: 1 },
+    { field: "newPrice", headerName: "New Price", flex: 1 },
+    { field: "category", headerName: "Category", flex: 1 },
     {
       field: "remove",
       headerName: "Remove",
@@ -62,7 +63,7 @@ const ListProduct = () => {
   ];
 
   const mockDataProducts = allProducts.map((product, index) => ({
-    id: product.prodId || index,
+    id: product.id || index,
     title: product.prodName,
     oldPrice: product.old_price,
     newPrice: product.new_price,

@@ -24,7 +24,7 @@ const ListProduct = () => {
   }, []);
 
   const remove_product = async (id) => {
-    await axios.post("http://localhost:5000/removeproduct", { id: id });
+    await axios.post("http://localhost:5000/removeproduct", {prodId: id });
     setAllProducts(prevProducts => prevProducts.filter((product) => product.prodId != id));
   };
 

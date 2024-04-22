@@ -141,9 +141,9 @@ const AddProduct = () => {
                   name="prodCategory"
                   error={!!touched.productCategory && !!errors.productCategory}
                 >
-                  <MenuItem value="women">Electronics</MenuItem>
-                  <MenuItem value="men">Clothing</MenuItem>
-                  <MenuItem value="kids">Furniture</MenuItem>
+                  <MenuItem value="women">Womens</MenuItem>
+                  <MenuItem value="men">Mens</MenuItem>
+                  <MenuItem value="kids">Kids</MenuItem>
                 </Select>
               </FormControl>
               <Box

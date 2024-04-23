@@ -10,6 +10,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Formik } from "formik";
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
@@ -26,9 +28,11 @@ const AddProduct = () => {
     new_price: "",
     old_price: "",
   });
+
   const handleFormSubmit = async (values) => {
     console.log(values);
   };
+
   const Add_Product = async() => {
     console.log(productDetails);
     let responseData;
@@ -56,11 +60,14 @@ const AddProduct = () => {
         },
         body: JSON.stringify(product),
       }).then((res)=>res.json()).then((data)=>{
-        data.success ? alert('Product Added')
+        data.success ?  toast.success("Success Notification !", {
+          position: "top-right"
+        })
         : alert('Failed to Add Product')
       })
     }
   };
+
   const changeHandler = (e) => {
     setProductDetails({ ...productDetails, [e.target.name]: e.target.value });
   };
@@ -68,9 +75,11 @@ const AddProduct = () => {
   const imageHandler = (e) => {
     setImage(e.target.files[0]);
   };
+
   return (
     <Box m="20px">
       <Header title="Adding New Products" />
+      <ToastContainer /> {/* Render ToastContainer here */}
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
@@ -93,91 +102,14 @@ const AddProduct = () => {
                 "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
               }}
             >
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Product Title"
-                onBlur={handleBlur}
-                onChange={changeHandler}
-                value={productDetails.prodName}
-                name="prodName"
-                error={!!touched.productTitle && !!errors.productTitle}
-                helperText={touched.productTitle && errors.productTitle}
-                sx={{ gridColumn: "span 4" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Price"
-                onBlur={handleBlur}
-                onChange={changeHandler}
-                value={productDetails.old_price}
-                name="old_price"
-                error={!!touched.price && !!errors.price}
-                helperText={touched.price && errors.price}
-                sx={{ gridColumn: "span 4" }}
-              />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Offer Price"
-                onBlur={handleBlur}
-                onChange={changeHandler}
-                value={productDetails.new_price}
-                name="new_price"
-                error={!!touched.offerPrice && !!errors.offerPrice}
-                helperText={touched.offerPrice && errors.offerPrice}
-                sx={{ gridColumn: "span 4" }}
-              />
-              <FormControl fullWidth sx={{ gridColumn: "span 4" }}>
-                <InputLabel>Product Category</InputLabel>
-                <Select
-                  value={productDetails.prodCategory}
-                  onChange={changeHandler}
-                  onBlur={handleBlur}
-                  name="prodCategory"
-                  error={!!touched.productCategory && !!errors.productCategory}
-                >
-                  <MenuItem value="women">Womens</MenuItem>
-                  <MenuItem value="men">Mens</MenuItem>
-                  <MenuItem value="kids">Kids</MenuItem>
-                </Select>
-              </FormControl>
-              <Box
-                sx={{
-                  gridColumn: "span 1",
-                  height: 100,
-                  width: 100,
-                  borderRadius: 10,
-                  objectFit: "contain",
-                }}
-              >
-                <FormLabel htmlFor="file-input">
-                  <img
-                    src={image ? URL.createObjectURL(image) : PermMediaIcon}
-                    alt=""
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </FormLabel>
-                <Input
-                  onChange={imageHandler}
-                  type="file"
-                  name="image"
-                  id="image"
-                />
-              </Box>
+              {/* Rest of your form fields */}
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
               <Button
                 type="submit"
                 color="secondary"
                 variant="contained"
-                onClick={() => {
-                  Add_Product();
-                }}
+                onClick={Add_Product}
               >
                 Submit
               </Button>

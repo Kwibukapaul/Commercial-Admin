@@ -5,6 +5,8 @@ import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const ListProduct = () => {
   const [allProducts, setAllProducts] = useState([]);
@@ -24,12 +26,19 @@ const ListProduct = () => {
   }, []);
 
   const remove_product = async (id) => {
-    await axios.post("http://localhost:5000/removeproduct", {id: id });
-    setAllProducts(prevProducts => prevProducts.filter((product) => product.id != id));
+    try {
+      await axios.post("http://localhost:5000/removeproduct", {id: id });
+      setAllProducts(prevProducts => prevProducts.filter((product) => product.id != id));
+      toast.success("Product removed successfully!🙂", {
+        position: "top-right"
+      });
+    } catch (error) {
+      console.error("Error removing product:", error);
+      toast.error("Failed to remove product!");
+    }
   };
 
   const columns = [
-
     { field: "id", headerName: "Id", flex: 1 },
     {
       field: "image",
@@ -73,6 +82,7 @@ const ListProduct = () => {
 
   return (
     <Box m="20px">
+        <ToastContainer /> 
       <Header title="All Products List" />
       <Box
         m="40px 0 0 0"

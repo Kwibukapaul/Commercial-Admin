@@ -1,4 +1,6 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme,IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataTeam } from "../../data/mockData";
@@ -6,10 +8,29 @@ import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettin
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "../../components/Header";
+import { useState,useEffect  } from "react";
 
 const Team = () => {
+  const [allUserz, setAllUserz]=useState([])
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const fetchUserz=async()=>{
+    await fetch("http://localhost:5000/alluserz")
+    .then((res) => res.json())
+    .then((data) => {
+      setAllUserz(data);
+    });
+  }
+  useEffect(()=>{
+    fetchUserz();
+  },[])
+
+  const remove_user = async (id) => {
+    await axios.post("http://localhost:5000/removeuser", {id: id });
+    setAllUserz(prevUser => prevUser.filter((user) => user.id != id));
+  };
+
   const columns = [
     { field: "id", headerName: "ID" },
     {
@@ -66,8 +87,32 @@ const Team = () => {
         );
       },
     },
-  ];
+    {
+      field: "remove",
+      headerName: "Remove",
+      flex: 1,
+      renderCell: (params) => (
+        <IconButton
+          aria-label="delete"
+          onClick={() => remove_user(params.row.id)}
+        >
+          <DeleteIcon />
+        </IconButton>
+      ),
+    },
 
+  ];
+ 
+  const dataTeam = allUserz.map((user, index) => ({
+    id: user.id || index,
+    name: user.name,
+    email: user.email,
+    password: user.password,
+    age: user.age,
+    phone: user.phone,
+    access: user.access,
+  }));
+console.log(dataTeam)
   return (
     <Box m="20px">
       <Header title="TEAM" subtitle="Managing the Team Members" />
@@ -100,7 +145,12 @@ const Team = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+             <DataGrid
+          checkboxSelection
+          rows={dataTeam}
+          columns={columns}
+          getRowId={(row) => row.id}
+        />
       </Box>
     </Box>
   );

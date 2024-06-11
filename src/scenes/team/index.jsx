@@ -27,7 +27,7 @@ const Team = () => {
 
   const remove_user = async (id) => {
     await axios.post("http://localhost:5000/removeuser", {id: id });
-    setAllUserz(prevUser => prevUser.filter((user) => user.id != id));
+    setAllUserz((prevUserz) => prevUserz.filter((user) => user.id !== id));
   };
 
   const columns = [
@@ -111,7 +111,7 @@ const Team = () => {
     phone: user.phone,
     access: user.access,
   }));
-console.log(dataTeam)
+  console.log(dataTeam)
   return (
     <Box m="20px">
       <Header title="TEAM" subtitle="Managing the Team Members" />

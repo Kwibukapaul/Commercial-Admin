@@ -1,89 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Box, useTheme, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 
-const ListProduct = () => {
-  const [allProducts, setAllProducts] = useState([]);
+const ListUsers = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const fetchInfo = async () => {
-    await fetch("http://localhost:5000/allproducts")
-      .then((res) => res.json())
-      .then((data) => {
-        setAllProducts(data);
-      });
+  // Default users array
+  const [users, setUsers] = React.useState([
+    { id: 1, name: "John Doe", email: "john@example.com", password: "12345" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", password: "abcde" },
+    { id: 3, name: "Alice Johnson", email: "alice@example.com", password: "alice123" },
+  ]);
+
+  // Remove user function
+  const removeUser = (id: number) => {
+    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
   };
 
-  useEffect(() => {
-    fetchInfo();
-  }, []);
-
-  const remove_product = async (id) => {
-    try {
-      await axios.post("http://localhost:5000/removeproduct", {id: id });
-      setAllProducts(prevProducts => prevProducts.filter((product) => product.id != id));
-      toast.success("Product removed successfully!🙂", {
-        position: "top-right"
-      });
-    } catch (error) {
-      console.error("Error removing product:", error);
-      toast.error("Failed to remove product!");
-    }
-  };
-
+  // Define columns for DataGrid
   const columns = [
-    { field: "id", headerName: "Id", flex: 1 },
-    {
-      field: "image",
-      headerName: "Image",
-      flex: 1,
-      renderCell: (params) => (
-        <img
-          src={params.value}
-          alt={params.row.title}
-          style={{ height: "50px", width: "50px", objectFit: "cover" }}
-        />
-      ),
-    },
-    { field: "title", headerName: "Title", flex: 1 },
-    { field: "oldPrice", headerName: "Old Price", flex: 1 },
-    { field: "newPrice", headerName: "New Price", flex: 1 },
-    { field: "category", headerName: "Category", flex: 1 },
+    { field: "id", headerName: "ID", flex: 1 },
+    { field: "name", headerName: "Name", flex: 1 },
+    { field: "email", headerName: "Email", flex: 1 },
+    { field: "password", headerName: "Password", flex: 1 },
     {
       field: "remove",
       headerName: "Remove",
       flex: 1,
-      renderCell: (params) => (
-        <IconButton
-          aria-label="delete"
-          onClick={() => remove_product(params.row.id)}
-        >
+      renderCell: (params: any) => (
+        <IconButton aria-label="delete" onClick={() => removeUser(params.row.id)}>
           <DeleteIcon />
         </IconButton>
       ),
     },
   ];
 
-  const mockDataProducts = allProducts.map((product, index) => ({
-    id: product.id || index,
-    title: product.prodName,
-    oldPrice: product.old_price,
-    newPrice: product.new_price,
-    category: product.prodCategory,
-    image: product.prodImage,
-  }));
-
   return (
     <Box m="20px">
-        <ToastContainer /> 
-      <Header title="All Products List" />
+      <Header title="All Users List" />
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -113,7 +71,7 @@ const ListProduct = () => {
       >
         <DataGrid
           checkboxSelection
-          rows={mockDataProducts}
+          rows={users}
           columns={columns}
           getRowId={(row) => row.id}
         />
@@ -122,4 +80,4 @@ const ListProduct = () => {
   );
 };
 
-export default ListProduct;
+export default ListUsers;

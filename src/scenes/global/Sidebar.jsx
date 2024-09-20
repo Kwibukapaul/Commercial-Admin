@@ -100,7 +100,7 @@ const Sidebar = () => {
                   alt="profile-user"
                   width="110px"
                   height="120px"
-                  src={`../../assets/user.jpg`}
+                  src={`../../assets/weather.png`}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
                 />
               </Box>
@@ -111,10 +111,10 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  U.Obed
+                  Admin
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
-                  VP Obed Admin
+                  VP W Admin
                 </Typography>
               </Box>
             </Box>
@@ -138,15 +138,15 @@ const Sidebar = () => {
               Stock
             </Typography>
             <Item
-              title="Add Product"
-              to="/addproduct"
+              title="Add User"
+              to="/adduser"
               icon={<AddShoppingCartIcon />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
-              title="Product List"
-              to="/listproduct"
+              title="Users List"
+              to="/listuser"
               icon={<ListAltIcon />}
               selected={selected}
               setSelected={setSelected}
@@ -160,13 +160,6 @@ const Sidebar = () => {
             >
               Data
             </Typography>
-            <Item
-              title="Manage Team"
-              to="/team"
-              icon={<PeopleOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
             <Item
               title="Contacts Information"
               to="/contacts"

@@ -2,98 +2,43 @@ import {
   Box,
   Button,
   FormControl,
-  FormLabel,
-  Input,
   InputLabel,
   MenuItem,
   Select,
   TextField,
 } from "@mui/material";
 import { Formik } from "formik";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
-import { useState } from "react";
-import PermMediaIcon from "@mui/icons-material/PermMedia";
 
-const AddProduct = () => {
+const AddUser = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-  const [image, setImage] = useState(false);
-  const [productDetails, setProductDetails] = useState({
-    prodName: "",
-    prodImage: "",
-    prodCategory: "women",
-    new_price: "",
-    old_price: "",
-  });
 
-  const handleFormSubmit = async (values) => {
-    console.log(values);
-  };
-
-  const Add_Product = async () => {
-    console.log(productDetails);
-    let responseData;
-    let product = productDetails;
-
-    let formData = new FormData();
-    formData.append("product", image);
-
-    await fetch("http://localhost:5000/upload", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
-      body: formData,
-    })
-      .then((resp) => resp.json())
-      .then((data) => {
-        responseData = data;
-      });
-
-    if (responseData.success) {
-      product.prodImage = responseData.image_url;
-      console.log(product);
-      await fetch("http://localhost:5000/addproduct", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(product),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          data.success
-            ? toast.success("Product Added Successfully😃!", {
-                position: "top-right",
-              })
-            : 
-            toast.fail("Adding Product Failed 😥!", {
-              position: "top-right",
-            })
-        });
-    }
-  };
-
-  const changeHandler = (e) => {
-    setProductDetails({ ...productDetails, [e.target.name]: e.target.value });
-  };
-
-  const imageHandler = (e) => {
-    setImage(e.target.files[0]);
-  };
+  // Default array of users
+  const users = [
+    { id: 1, name: "John Doe", email: "john@example.com", password: "12345" },
+    { id: 2, name: "Jane Smith", email: "jane@example.com", password: "abcde" },
+    { id: 3, name: "Alice Johnson", email: "alice@example.com", password: "alice123" },
+  ];
 
   return (
     <Box m="20px">
-      <Header title="Adding New Products" />
-      <ToastContainer /> 
+      <Header title="User Information" />
+      <Box>
+        {users.map((user) => (
+          <Box key={user.id} mb="20px" p="20px" border="1px solid #ccc" borderRadius="10px">
+            <p><strong>Name:</strong> {user.name}</p>
+            <p><strong>Email:</strong> {user.email}</p>
+            <p><strong>Password:</strong> {user.password}</p>
+          </Box>
+        ))}
+      </Box>
+
       <Formik
-        onSubmit={handleFormSubmit}
         initialValues={initialValues}
         validationSchema={checkoutSchema}
+        onSubmit={(values) => console.log(values)}
       >
         {({
           values,
@@ -116,86 +61,57 @@ const AddProduct = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Product Title"
+                label="User Name"
                 onBlur={handleBlur}
-                onChange={changeHandler}
-                value={productDetails.prodName}
-                name="prodName"
-                error={!!touched.productTitle && !!errors.productTitle}
-                helperText={touched.productTitle && errors.productTitle}
+                onChange={handleChange}
+                value={values.name}
+                name="name"
+                error={!!touched.name && !!errors.name}
+                helperText={touched.name && errors.name}
                 sx={{ gridColumn: "span 4" }}
               />
               <TextField
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Price"
+                label="Email"
                 onBlur={handleBlur}
-                onChange={changeHandler}
-                value={productDetails.old_price}
-                name="old_price"
-                error={!!touched.price && !!errors.price}
-                helperText={touched.price && errors.price}
+                onChange={handleChange}
+                value={values.email}
+                name="email"
+                error={!!touched.email && !!errors.email}
+                helperText={touched.email && errors.email}
                 sx={{ gridColumn: "span 4" }}
               />
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
-                label="Offer Price"
+                type="password"
+                label="Password"
                 onBlur={handleBlur}
-                onChange={changeHandler}
-                value={productDetails.new_price}
-                name="new_price"
-                error={!!touched.offerPrice && !!errors.offerPrice}
-                helperText={touched.offerPrice && errors.offerPrice}
+                onChange={handleChange}
+                value={values.password}
+                name="password"
+                error={!!touched.password && !!errors.password}
+                helperText={touched.password && errors.password}
                 sx={{ gridColumn: "span 4" }}
               />
               <FormControl fullWidth sx={{ gridColumn: "span 4" }}>
-                <InputLabel>Product Category</InputLabel>
+                <InputLabel>User Role</InputLabel>
                 <Select
-                  value={productDetails.prodCategory}
-                  onChange={changeHandler}
+                  value={values.role}
+                  onChange={handleChange}
                   onBlur={handleBlur}
-                  name="prodCategory"
-                  error={!!touched.productCategory && !!errors.productCategory}
+                  name="role"
+                  error={!!touched.role && !!errors.role}
                 >
-                  <MenuItem value="women">Womens</MenuItem>
-                  <MenuItem value="men">Mens</MenuItem>
-                  <MenuItem value="kids">Kids</MenuItem>
+                  <MenuItem value="admin">Admin</MenuItem>
+                  <MenuItem value="user">User</MenuItem>
                 </Select>
               </FormControl>
-              <Box
-                sx={{
-                  gridColumn: "span 1",
-                  height: 100,
-                  width: 100,
-                  borderRadius: 10,
-                  objectFit: "contain",
-                }}
-              >
-                <FormLabel htmlFor="file-input">
-                  <img
-                    src={image ? URL.createObjectURL(image) : PermMediaIcon}
-                    alt=""
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </FormLabel>
-                <Input
-                  onChange={imageHandler}
-                  type="file"
-                  name="image"
-                  id="image"
-                />
-              </Box>
             </Box>
             <Box display="flex" justifyContent="end" mt="20px">
-              <Button
-                type="submit"
-                color="secondary"
-                variant="contained"
-                onClick={Add_Product}
-              >
+              <Button type="submit" color="secondary" variant="contained">
                 Submit
               </Button>
             </Box>
@@ -206,18 +122,20 @@ const AddProduct = () => {
   );
 };
 
+// Form validation schema
 const checkoutSchema = yup.object().shape({
-  prodName: yup.string().required("Required"),
-  old_price: yup.number().required("Required"),
-  new_price: yup.number().required("Required"),
-  prodCategory: yup.string().required("Required"),
+  name: yup.string().required("Required"),
+  email: yup.string().email("Invalid email").required("Required"),
+  password: yup.string().required("Required"),
+  role: yup.string().required("Required"),
 });
 
+// Initial form values
 const initialValues = {
-  prodName: "",
-  old_price: "",
-  new_price: "",
-  prodCategory: "",
+  name: "",
+  email: "",
+  password: "",
+  role: "",
 };
 
-export default AddProduct;
+export default AddUser;

@@ -1,31 +1,10 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "../theme";
 import ProgressCircle from "./ProgressCircle";
-import React, { useEffect, useState } from "react";
 
 const StatBox = ({ title, subtitle, icon, progress, increase, count }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [displayCount, setDisplayCount] = useState(0);
-
-  useEffect(() => {
-    let start = 0;
-    const end = count;
-    const duration = 2000; // 2 seconds
-    const increment = Math.ceil(end / (duration / 100));
-
-    const timer = setInterval(() => {
-      if (start < end) {
-        start += increment;
-        setDisplayCount(start);
-      } else {
-        setDisplayCount(end);
-        clearInterval(timer);
-      }
-    }, 100);
-
-    return () => clearInterval(timer);
-  }, [count]);
 
   return (
     <Box width="100%" m="0 30px">
@@ -37,7 +16,7 @@ const StatBox = ({ title, subtitle, icon, progress, increase, count }) => {
             fontWeight="bold"
             sx={{ color: colors.grey[100] }}
           >
-            {displayCount}
+            {count}
           </Typography>
         </Box>
         <Box>

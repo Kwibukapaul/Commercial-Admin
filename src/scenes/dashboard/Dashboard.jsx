@@ -59,6 +59,7 @@ const Dashboard = () => {
             subtitle="Emails Sent"
             progress="0.75"
             increase="+14%"
+            count="12361"
             icon={
               <EmailIcon
                 sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
@@ -66,6 +67,7 @@ const Dashboard = () => {
             }
           />
         </Box>
+
         <Box
           gridColumn="span 3"
           backgroundColor={colors.primary[400]}

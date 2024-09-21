@@ -12,32 +12,15 @@ import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
 
-const AddUser = () => {
+const AddProduct = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
-
-  // Default array of users
-  const users = [
-    { id: 1, name: "John Doe", email: "john@example.com", password: "12345" },
-    { id: 2, name: "Jane Smith", email: "jane@example.com", password: "abcde" },
-    { id: 3, name: "Alice Johnson", email: "alice@example.com", password: "alice123" },
-  ];
 
   return (
     <Box m="20px">
-      <Header title="User Information" />
-      <Box>
-        {users.map((user) => (
-          <Box key={user.id} mb="20px" p="20px" border="1px solid #ccc" borderRadius="10px">
-            <p><strong>Name:</strong> {user.name}</p>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Password:</strong> {user.password}</p>
-          </Box>
-        ))}
-      </Box>
-
+      <Header title="Add New Product" />
       <Formik
-        initialValues={initialValues}
-        validationSchema={checkoutSchema}
+        initialValues={initialProductValues}
+        validationSchema={productSchema}
         onSubmit={(values) => console.log(values)}
       >
         {({
@@ -61,7 +44,7 @@ const AddUser = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="User Name"
+                label="Product Name"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.name}
@@ -73,40 +56,41 @@ const AddUser = () => {
               <TextField
                 fullWidth
                 variant="filled"
-                type="text"
-                label="Email"
+                type="number"
+                label="Price"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.email}
-                name="email"
-                error={!!touched.email && !!errors.email}
-                helperText={touched.email && errors.email}
+                value={values.price}
+                name="price"
+                error={!!touched.price && !!errors.price}
+                helperText={touched.price && errors.price}
                 sx={{ gridColumn: "span 4" }}
               />
               <TextField
                 fullWidth
                 variant="filled"
-                type="password"
-                label="Password"
+                type="text"
+                label="Description"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.password}
-                name="password"
-                error={!!touched.password && !!errors.password}
-                helperText={touched.password && errors.password}
+                value={values.description}
+                name="description"
+                error={!!touched.description && !!errors.description}
+                helperText={touched.description && errors.description}
                 sx={{ gridColumn: "span 4" }}
               />
               <FormControl fullWidth sx={{ gridColumn: "span 4" }}>
-                <InputLabel>User Role</InputLabel>
+                <InputLabel>Category</InputLabel>
                 <Select
-                  value={values.role}
+                  value={values.category}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  name="role"
-                  error={!!touched.role && !!errors.role}
+                  name="category"
+                  error={!!touched.category && !!errors.category}
                 >
-                  <MenuItem value="admin">Admin</MenuItem>
-                  <MenuItem value="user">User</MenuItem>
+                  <MenuItem value="electronics">Electronics</MenuItem>
+                  <MenuItem value="clothing">Clothing</MenuItem>
+                  <MenuItem value="home">Home Appliances</MenuItem>
                 </Select>
               </FormControl>
             </Box>
@@ -122,20 +106,20 @@ const AddUser = () => {
   );
 };
 
-// Form validation schema
-const checkoutSchema = yup.object().shape({
-  name: yup.string().required("Required"),
-  email: yup.string().email("Invalid email").required("Required"),
-  password: yup.string().required("Required"),
-  role: yup.string().required("Required"),
+// Validation schema for products
+const productSchema = yup.object().shape({
+  name: yup.string().required("Product name is required"),
+  price: yup.number().required("Price is required"),
+  description: yup.string().required("Description is required"),
+  category: yup.string().required("Category is required"),
 });
 
-// Initial form values
-const initialValues = {
+// Initial product form values
+const initialProductValues = {
   name: "",
-  email: "",
-  password: "",
-  role: "",
+  price: "",
+  description: "",
+  category: "",
 };
 
-export default AddUser;
+export default AddProduct;

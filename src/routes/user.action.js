@@ -1,25 +1,20 @@
-import { Client, Databases, Query } from "appwrite";
+import { Client, Databases, ID } from "appwrite";
 
 const client = new Client()
-  .setEndpoint(process.env.APPWRITE_ENDPOINT_ID)
-  .setProject(process.env.APPWRITE_PROJECT_ID);
+  .setEndpoint(process.env.REACT_APP_APPWRITE_ENDPOINT_ID)
+  .setProject(process.env.REACT_APP_APPWRITE_PROJECT_ID);
 
 const databases = new Databases(client);
 
 export async function getUsers() {
-   
-  let promise = databases.listDocuments(
-    process.env.APPWRITE_DATABSE_ID,
-    process.env.APPWRITE_USERS_COLLECTION_ID,
-    [Query.equal("title", "Hamlet")]
-  );
-
-  promise.then(
-    function (response) {
-      console.log(response);
-    },
-    function (error) {
-      console.log(error);
-    }
-  );
+  try {
+    const response = await databases.listDocuments(
+      process.env.REACT_APP_APPWRITE_DATABSE_ID,
+      process.env.REACT_APP_APPWRITE_USERS_COLLECTION_ID,
+      [ID]
+    );
+    console.log(response);
+  } catch (error) {
+    console.error("Error fetching users:", error.message);
+  }
 }

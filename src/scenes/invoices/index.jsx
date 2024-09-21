@@ -1,50 +1,40 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataInvoices } from "../../data/mockData";
 import Header from "../../components/Header";
 
-const Invoices = () => {
+// Mock data for products
+const mockDataProducts = [
+  { id: 1, name: "Product A", marketplace: "Amazon", price: 100, stock: 50 },
+  { id: 2, name: "Product B", marketplace: "eBay", price: 200, stock: 20 },
+  { id: 3, name: "Product C", marketplace: "Etsy", price: 150, stock: 30 },
+];
+
+const Products = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  // Columns for the product table
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "name", headerName: "Product Name", flex: 1 },
+    { field: "marketplace", headerName: "Marketplace", flex: 1 },
     {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "phone",
-      headerName: "Phone Number",
-      flex: 1,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1,
-    },
-    {
-      field: "cost",
-      headerName: "Cost",
+      field: "price",
+      headerName: "Price",
       flex: 1,
       renderCell: (params) => (
-        <Typography color={colors.greenAccent[500]}>
-          ${params.row.cost}
-        </Typography>
+        <Typography color={colors.greenAccent[500]}>${params.row.price}</Typography>
       ),
     },
-    {
-      field: "date",
-      headerName: "Date",
-      flex: 1,
-    },
+    { field: "stock", headerName: "Stock", flex: 1 },
   ];
 
   return (
     <Box m="20px">
-      <Header title="INVOICES" subtitle="List of Invoice Balances" />
+      <Header title="PRODUCTS" subtitle="List of Market Products" />
+
+      {/* DataGrid to display products */}
       <Box
         m="40px 0 0 0"
         height="75vh"
@@ -54,9 +44,6 @@ const Invoices = () => {
           },
           "& .MuiDataGrid-cell": {
             borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
           },
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: colors.blueAccent[700],
@@ -74,10 +61,10 @@ const Invoices = () => {
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataInvoices} columns={columns} />
+        <DataGrid checkboxSelection rows={mockDataProducts} columns={columns} />
       </Box>
     </Box>
   );
 };
 
-export default Invoices;
+export default Products;

@@ -1,5 +1,6 @@
 import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { tokens } from "../../theme";
+import { mockTransactions } from "../../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
@@ -11,40 +12,17 @@ import GeographyChart from "../../components/GeographyChart";
 import BarChart from "../../components/BarChart";
 import StatBox from "../../components/StatBox";
 import ProgressCircle from "../../components/ProgressCircle";
-import CountUp from 'react-countup';
-import React, { useEffect, useState } from "react";
+import CountUp from 'react-countup'; // Ensure you have this installed
 
-const Dashboard = () => {
+const Dashboard = ({ counts = { users: 0, products: 0, markets: 0, items: 0 } }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [counts, setCounts] = useState({
-    users: 0,
-    products: 0,
-    markets: 0,
-    items: 0,
-  });
-
-  // Fetch counts from the backend
-  useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        const response = await fetch("http://localhost:5000/api/counts"); // Adjust the API endpoint as necessary
-        const data = await response.json();
-        setCounts(data); // Assuming data is in the format { users, products, markets, items }
-      } catch (error) {
-        console.error("Failed to fetch counts:", error);
-      }
-    };
-
-    fetchCounts();
-  }, []);
 
   return (
     <Box m="20px">
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
-
         <Box>
           <Button
             sx={{
@@ -71,8 +49,8 @@ const Dashboard = () => {
         {/* ROW 1 */}
         <Box gridColumn="span 3" backgroundColor={colors.primary[400]} display="flex" alignItems="center" justifyContent="center">
           <StatBox
-            title={<CountUp end={counts.users} duration={2.75} />}
-            subtitle="Users"
+            title={<CountUp end={counts.users} duration={2} />}
+            subtitle="Total Users"
             progress="0.75"
             increase="+14%"
             icon={<PersonAddIcon sx={{ color: colors.greenAccent[600], fontSize: "26px" }} />}
@@ -80,8 +58,8 @@ const Dashboard = () => {
         </Box>
         <Box gridColumn="span 3" backgroundColor={colors.primary[400]} display="flex" alignItems="center" justifyContent="center">
           <StatBox
-            title={<CountUp end={counts.products} duration={2.75} />}
-            subtitle="Products"
+            title={<CountUp end={counts.products} duration={2} />}
+            subtitle="Total Products"
             progress="0.50"
             increase="+21%"
             icon={<PointOfSaleIcon sx={{ color: colors.greenAccent[600], fontSize: "26px" }} />}
@@ -89,26 +67,26 @@ const Dashboard = () => {
         </Box>
         <Box gridColumn="span 3" backgroundColor={colors.primary[400]} display="flex" alignItems="center" justifyContent="center">
           <StatBox
-            title={<CountUp end={counts.markets} duration={2.75} />}
-            subtitle="Markets"
+            title={<CountUp end={counts.markets} duration={2} />}
+            subtitle="Total Markets"
             progress="0.30"
             increase="+5%"
-            icon={<EmailIcon sx={{ color: colors.greenAccent[600], fontSize: "26px" }} />}
+            icon={<TrafficIcon sx={{ color: colors.greenAccent[600], fontSize: "26px" }} />}
           />
         </Box>
         <Box gridColumn="span 3" backgroundColor={colors.primary[400]} display="flex" alignItems="center" justifyContent="center">
           <StatBox
-            title={<CountUp end={counts.items} duration={2.75} />}
-            subtitle="Items"
+            title={<CountUp end={counts.items} duration={2} />}
+            subtitle="Total Items"
             progress="0.80"
             increase="+43%"
-            icon={<TrafficIcon sx={{ color: colors.greenAccent[600], fontSize: "26px" }} />}
+            icon={<EmailIcon sx={{ color: colors.greenAccent[600], fontSize: "26px" }} />}
           />
         </Box>
 
         {/* ROW 2 */}
         <Box gridColumn="span 8" gridRow="span 2" backgroundColor={colors.primary[400]}>
-          <Box mt="25px" p="0 30px" display="flex " justifyContent="space-between" alignItems="center">
+          <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
             <Box>
               <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>
                 Revenue Generated
@@ -128,12 +106,34 @@ const Dashboard = () => {
           </Box>
         </Box>
         <Box gridColumn="span 4" gridRow="span 2" backgroundColor={colors.primary[400]} overflow="auto">
-          {/* Recent Transactions Code Here */}
+          <Box display="flex" justifyContent="space-between" alignItems="center" borderBottom={`4px solid ${colors.primary[500]}`} colors={colors.grey[100]} p="15px">
+            <Typography color={colors.grey[100]} variant="h5" fontWeight="600">
+              Recent Transactions
+            </Typography>
+          </Box>
+          {mockTransactions.map((transaction, i) => (
+            <Box key={`${transaction.txId}-${i}`} display="flex" justifyContent="space-between" alignItems="center" borderBottom={`4px solid ${colors.primary[500]}`} p="15px">
+              <Box>
+                <Typography color={colors.greenAccent[500]} variant="h5" fontWeight="600">
+                  {transaction.txId}
+                </Typography>
+                <Typography color={colors.grey[100]}>
+                  {transaction.user}
+                </Typography>
+              </Box>
+              <Box color={colors.grey[100]}>{transaction.date}</Box>
+              <Box backgroundColor={colors.greenAccent[500]} p="5px 10px" borderRadius="4px">
+                ${transaction.cost}
+              </Box>
+            </Box>
+          ))}
         </Box>
 
         {/* ROW 3 */}
         <Box gridColumn="span 4" gridRow="span 2" backgroundColor={colors.primary[400]} p="30px">
-          <Typography variant="h5" fontWeight="600">Campaign</Typography>
+          <Typography variant="h5" fontWeight="600">
+            Campaign
+          </Typography>
           <Box display="flex" flexDirection="column" alignItems="center" mt="25px">
             <ProgressCircle size="125" />
             <Typography variant="h5" color={colors.greenAccent[500]} sx={{ mt: "15px" }}>

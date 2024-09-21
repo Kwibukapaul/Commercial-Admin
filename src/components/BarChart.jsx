@@ -1,17 +1,50 @@
 import { useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
 import { tokens } from "../theme";
-import { mockBarData as data } from "../data/mockData";
+import React, { useEffect, useState } from "react";
 
 const BarChart = ({ isDashboard = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [productData, setProductData] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/products");
+        const data = await response.json();
+
+        // Prepare data for the bar chart
+        const markets = [...new Set(data.map(product => product.market))]; // Unique markets
+        const products = [...new Set(data.map(product => product.name))]; // Unique products
+
+        const chartData = markets.map(market => {
+          const marketData = { market };
+          products.forEach(product => {
+            const productInfo = data.find(item => item.market === market && item.name === product);
+            marketData[product] = productInfo ? productInfo.price : 0; // Default to 0 if not found
+          });
+          return marketData;
+        });
+
+        setProductData(chartData);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Get all product names for keys
+  const keys = productData.length > 0 ? Object.keys(productData[0]).filter(key => key !== "market") : [];
 
   return (
     <ResponsiveBar
-      data={data}
+      data={productData}
+      keys={keys} // Use product names as keys
+      indexBy="market" // Use market as index
       theme={{
-        // added
         axis: {
           domain: {
             line: {
@@ -39,44 +72,18 @@ const BarChart = ({ isDashboard = false }) => {
           },
         },
       }}
-      keys={["hot dog", "burger", "sandwich", "kebab", "fries", "donut"]}
-      indexBy="country"
       margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
       padding={0.3}
       valueScale={{ type: "linear" }}
       indexScale={{ type: "band", round: true }}
       colors={{ scheme: "nivo" }}
-      defs={[
-        {
-          id: "dots",
-          type: "patternDots",
-          background: "inherit",
-          color: "#38bcb2",
-          size: 4,
-          padding: 1,
-          stagger: true,
-        },
-        {
-          id: "lines",
-          type: "patternLines",
-          background: "inherit",
-          color: "#eed312",
-          rotation: -45,
-          lineWidth: 6,
-          spacing: 10,
-        },
-      ]}
-      borderColor={{
-        from: "color",
-        modifiers: [["darker", "1.6"]],
-      }}
       axisTop={null}
       axisRight={null}
       axisBottom={{
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "country", // changed
+        legend: isDashboard ? undefined : "Market",
         legendPosition: "middle",
         legendOffset: 32,
       }}
@@ -84,17 +91,13 @@ const BarChart = ({ isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "food", // changed
+        legend: isDashboard ? undefined : "Price",
         legendPosition: "middle",
         legendOffset: -40,
       }}
       enableLabel={false}
       labelSkipWidth={12}
       labelSkipHeight={12}
-      labelTextColor={{
-        from: "color",
-        modifiers: [["darker", 1.6]],
-      }}
       legends={[
         {
           dataFrom: "keys",
@@ -109,20 +112,12 @@ const BarChart = ({ isDashboard = false }) => {
           itemDirection: "left-to-right",
           itemOpacity: 0.85,
           symbolSize: 20,
-          effects: [
-            {
-              on: "hover",
-              style: {
-                itemOpacity: 1,
-              },
-            },
-          ],
         },
       ]}
       role="application"
-      barAriaLabel={function (e) {
-        return e.id + ": " + e.formattedValue + " in country: " + e.indexValue;
-      }}
+      barAriaLabel={(e) =>
+        `${e.id}: ${e.formattedValue} in market: ${e.indexValue}`
+      }
     />
   );
 };

@@ -1,15 +1,41 @@
 import { ResponsivePie } from "@nivo/pie";
 import { tokens } from "../theme";
 import { useTheme } from "@mui/material";
-import { mockPieData as data } from "../data/mockData";
+import React, { useEffect, useState } from "react";
 
 const PieChart = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [productData, setProductData] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/products");
+        const data = await response.json();
+
+        // Prepare data for the pie chart
+        const chartData = data.map((product) => ({
+          id: product.name, // Use product name as id
+          label: product.market,
+          value: product.price, // Use product price as value
+
+        }));
+
+        setProductData(chartData);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <ResponsivePie
-      data={data}
+      data={productData}
       theme={{
+        // Custom theme colors
         axis: {
           domain: {
             line: {
@@ -50,33 +76,13 @@ const PieChart = () => {
       arcLinkLabelsTextColor={colors.grey[100]}
       arcLinkLabelsThickness={2}
       arcLinkLabelsColor={{ from: "color" }}
-      enableArcLabels={false}
+      enableArcLabels={true} // Enable arc labels for better visibility
       arcLabelsRadiusOffset={0.4}
       arcLabelsSkipAngle={7}
       arcLabelsTextColor={{
         from: "color",
         modifiers: [["darker", 2]],
       }}
-      defs={[
-        {
-          id: "dots",
-          type: "patternDots",
-          background: "inherit",
-          color: "rgba(255, 255, 255, 0.3)",
-          size: 4,
-          padding: 1,
-          stagger: true,
-        },
-        {
-          id: "lines",
-          type: "patternLines",
-          background: "inherit",
-          color: "rgba(255, 255, 255, 0.3)",
-          rotation: -45,
-          lineWidth: 6,
-          spacing: 10,
-        },
-      ]}
       legends={[
         {
           anchor: "bottom",

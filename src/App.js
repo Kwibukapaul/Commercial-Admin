@@ -16,8 +16,8 @@ import Calendar from "./scenes/calendar/calendar";
 import ListUsers from "./scenes/ListProduct";
 import AddProduct from "./scenes/AddProduct";
 import Products from "./scenes/invoices";
-
-
+import { ToastContainer } from "react-toastify"; // Import ToastContainer
+import 'react-toastify/dist/ReactToastify.css'; // Import CSS for toast
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -41,12 +41,13 @@ function App() {
               <Route path="/line" element={<Line />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/addproduct" element={<AddProduct />} />
-              <Route path="/listuser"element={<ListUsers />} />
+              <Route path="/listuser" element={<ListUsers />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/geography" element={<Geography />} />
             </Routes>
           </main>
         </div>
+        <ToastContainer /> {/* Add ToastContainer here */}
       </ThemeProvider>
     </ColorModeContext.Provider>
   );

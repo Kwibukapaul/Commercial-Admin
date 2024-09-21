@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -11,9 +12,55 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
+import { toast } from "react-toastify";
 
 const AddProduct = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
+  const [categories, setCategories] = useState([]);
+
+  // Simulated API call to fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      // Simulating an API response
+      const response = [
+        "Meals",
+        "Furniture",
+        "Electronics",
+        "Clothing",
+        "Toys",
+        "Books",
+        "Beauty Products",
+        "Sports Equipment",
+        "Jewelry",
+        "Gardening Tools",
+      ];
+      setCategories(response);
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add product");
+      }
+
+      const data = await response.json();
+      toast.success("Product added successfully!");
+      resetForm(); // Reset the form after successful submission
+    } catch (error) {
+      toast.error("Failed to add product: " + error.message);
+    }
+  };
 
   return (
     <Box m="20px">
@@ -21,7 +68,7 @@ const AddProduct = () => {
       <Formik
         initialValues={initialProductValues}
         validationSchema={productSchema}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={handleSubmit}
       >
         {({
           values,
@@ -70,13 +117,13 @@ const AddProduct = () => {
                 fullWidth
                 variant="filled"
                 type="text"
-                label="Description"
+                label="Market"
                 onBlur={handleBlur}
                 onChange={handleChange}
-                value={values.description}
-                name="description"
-                error={!!touched.description && !!errors.description}
-                helperText={touched.description && errors.description}
+                value={values.market}
+                name="market"
+                error={!!touched.market && !!errors.market}
+                helperText={touched.market && errors.market}
                 sx={{ gridColumn: "span 4" }}
               />
               <FormControl fullWidth sx={{ gridColumn: "span 4" }}>
@@ -88,9 +135,11 @@ const AddProduct = () => {
                   name="category"
                   error={!!touched.category && !!errors.category}
                 >
-                  <MenuItem value="electronics">Electronics</MenuItem>
-                  <MenuItem value="clothing">Clothing</MenuItem>
-                  <MenuItem value="home">Home Appliances</MenuItem>
+                  {categories.map((category) => (
+                    <MenuItem key={category} value={category}>
+                      {category}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Box>
@@ -110,7 +159,7 @@ const AddProduct = () => {
 const productSchema = yup.object().shape({
   name: yup.string().required("Product name is required"),
   price: yup.number().required("Price is required"),
-  description: yup.string().required("Description is required"),
+  market: yup.string().required("Market is required"),
   category: yup.string().required("Category is required"),
 });
 
@@ -118,7 +167,7 @@ const productSchema = yup.object().shape({
 const initialProductValues = {
   name: "",
   price: "",
-  description: "",
+  market: "",
   category: "",
 };
 

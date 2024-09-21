@@ -22,7 +22,6 @@ const ListUsers = () => {
           id: user._id, // Use _id as id
           name: user.name,
           email: user.email,
-          password: user.password,
         }));
 
         setUsers(formattedData);
@@ -37,8 +36,12 @@ const ListUsers = () => {
   // Remove user function
   const removeUser = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/users/${id}`, { method: "DELETE" });
-      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== id));
+      const response = await fetch(`http://localhost:5000/api/users/${id}`, { method: "DELETE" });
+      if (response.ok) {
+        setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id)); // Ensure to use 'id' instead of '_id' here
+      } else {
+        console.error("Failed to remove user:", response.statusText);
+      }
     } catch (error) {
       console.error("Failed to remove user:", error);
     }
@@ -49,19 +52,17 @@ const ListUsers = () => {
     { field: "id", headerName: "ID", width: 150 }, // Increased width for ID
     { field: "name", headerName: "Name", flex: 1 },
     { field: "email", headerName: "Email", flex: 1 },
-    { field: "password", headerName: "Password", flex: 1 },
     {
       field: "remove",
       headerName: "Remove",
-      flex: 1,
-      renderCell: (params: any) => (
+      width: 100, // Set width for remove column
+      renderCell: (params) => (
         <IconButton aria-label="delete" onClick={() => removeUser(params.row.id)}>
           <DeleteIcon />
         </IconButton>
       ),
     },
   ];
-  
 
   return (
     <Box m="20px">

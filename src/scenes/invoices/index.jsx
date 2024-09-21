@@ -1,8 +1,9 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import React, { useEffect, useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const Products = () => {
   const theme = useTheme();
@@ -33,9 +34,23 @@ const Products = () => {
     fetchProducts();
   }, []);
 
+  // Remove product function
+  const removeProduct = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/products/${id}`, { method: "DELETE" });
+      if (response.ok) {
+        setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
+      } else {
+        console.error("Failed to remove product:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Failed to remove product:", error);
+    }
+  };
+
   // Columns for the product table
   const columns = [
-    { field: "id", headerName: "ID", width: 150 }, // Increased width for ID
+    { field: "id", headerName: "ID", width: 150 },
     { field: "name", headerName: "Product Name", flex: 1 },
     { field: "market", headerName: "Marketplace", flex: 1 },
     {
@@ -46,8 +61,17 @@ const Products = () => {
         <Typography color={colors.greenAccent[500]}>${params.row.price}</Typography>
       ),
     },
+    {
+      field: "remove",
+      headerName: "Remove",
+      width: 100, // Set width for remove column
+      renderCell: (params) => (
+        <IconButton aria-label="delete" onClick={() => removeProduct(params.row.id)}>
+          <DeleteIcon />
+        </IconButton>
+      ),
+    },
   ];
-  
 
   return (
     <Box m="20px">
